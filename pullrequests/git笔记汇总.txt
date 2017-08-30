@@ -1,0 +1,480 @@
+##############################################
+SSH认证
+创建SSH Key
+$ ssh-keygen -t rsa -C "youremail@example.com"
+
+id_rsa		私钥，不可泄漏
+id_rsa.pub	公钥
+
+将 id_rsa.pub 复制到 https://github.com/settings/keys
+
+关联一个远程库
+$ git remote add <shortname> <url> 
+$ git remote add origin git@server-name:path/repo-name.git
+	<shortname>		origin			默认的远程库的名字，可以修改
+	<url>			server-name		github.com
+					path/repo-name	github的用户名/项目名
+
+从远程仓库中抓取与拉取
+$ git fetch [remote-name]
+	访问远程仓库，从中拉取所有还没有的数据
+	会拥有那个远程仓库中所有分支
+
+推送更新
+$ git push origin master
+	origin	远程仓库的默认名称
+	master	需要推送的分支名称
+
+	-u		把本地的master分支内容推送的远程新的master分支
+			并把本地的master分支和远程的master分支关联
+			首次推送可以加-u
+
+从远程库克隆到本地
+$ git clone <add>
+
+查看远程仓库
+$ git remote
+	-v (--verbose)，显示对应的克隆地址
+	
+	$ git remote show [remote-name]
+		列出远程仓库的 URL 与跟踪分支的信息
+
+抓取分支
+$ git pull
+
+在本地创建和远程分支对应的分支
+$ git checkout -b branch-name origin/branch-name
+
+关联本地分支和远程分支
+$ git branch --set-upstream branch-name origin/branch-name
+	如果git pull提示“no tracking information”，进行本操作
+	branch-name			分支名称
+	origin/branch-name	远程分支名称
+
+远程仓库的重命名
+$ git remote rename <old name> <new name>
+
+移除远程仓库
+$ git remote rm <name>
+###################################################
+安装git
+<Download for Linux and Unix>
+
+It is easiest to install Git on Linux using the preferred package manager of your Linux distribution.
+
+Debian/Ubuntu
+$ apt-get install git
+
+Fedora
+$ yum install git (up to Fedora 21)
+$ dnf install git (Fedora 22 and later)
+
+Gentoo
+$ emerge --ask --verbose dev-vcs/git
+
+Arch Linux
+$ pacman -S git
+
+openSUSE
+$ zypper install git
+
+FreeBSD
+$ cd /usr/ports/devel/git
+$ make install
+
+Solaris 9/10/11 (OpenCSW)
+$ pkgutil -i git
+
+Solaris 11 Express
+$ pkg install developer/versioning/git
+
+OpenBSD
+$ pkg_add git
+
+Alpine
+$ apk add git
+
+Mac OS X
+https://git-scm.com/download/mac
+
+Windows
+https://git-scm.com/download/win
+#################################################
+Git 原理
+
+########################################
+#          #                          #
+#  工作区  #  仓库 ( 暂存区 | 分支 )  #
+#          #                          #
+########################################
+
+	$ git init
+	创建一个仓库,所在目录即为工作区
+
+	$ git add 
+	将文件从工作区提交到暂存区
+
+	$ git commit
+	将文件从暂存区提交到当前分支
+
+	$ git commit -a 
+	跳过暂存区,自动把所有已经跟踪过的文件暂存起来一并提交到当前分支
+	
+master：主分支
+#################################################
+分支管理
+
+主分支:	master
+
+创建分支
+$ git checkout -b <name>
+	-b 创建并切换分支等于一下两条命令
+		$ git branch <name>		创建分支<name>
+		$ git checkout <name>	切换到<name>分支
+
+查看分支
+$ git branch
+
+合并指定分支到当前分支
+$ git merge <name>
+	--no-ff		用普通模式合并，产生一个新的 merge commit.
+				默认使用 Fast forward 模式没有 merge commit.
+
+删除分支
+$ git branch -d <name>
+	-d	删除合并后的分支
+	-D	强制删除分支
+
+暂存当前正在进行的工作
+$ git stash
+
+查看已暂存的工作
+$ git stash list
+
+恢复暂存的工作同时把暂存内容删除
+$ git stash pop
+	恢复暂存的工作
+	$ git stash apply stash@{0}
+	将暂存内容删除
+$ git stash drop stash@{0}
+###############################################
+创建仓库
+$ git init
+
+对文件进行跟踪
+$ git add <file>
+
+忽略文件
+创建一个名为 .gitignore 的文件
+列出要忽略的文件模式，例：
+*.[oa]		# 忽略所有以 .o 或 .a 结尾的文件
+*~			# 所有以波浪符（~）结尾的文件
+GitHub汇总多语言.gitignore文件，地址: https://github.com/github/gitignore
+
+提交更新
+$ git commit
+	-m ""	添加更新说明
+	-a		跳过使用暂存区域,自动把所有已经跟踪过的文件暂存起来一并提交
+	-–amend	修改最后一次的提交
+
+检查当前文件状态
+$ git status
+	-s		-s表示short
+
+查看工作目录中当前文件和暂存区域快照之间的差异(difference)
+$ git diff
+	--staged 或 --cached	已经暂存起来的文件和上次提交时的快照之间的差异
+
+查看提交历史
+$ git log
+	--graph	查看分支合并图（建议使用时加--oneline）
+	-p		显示每次提交的内容差异
+		-–word-diff	可以从单词层面对比，用于书籍、论文等
+		--oneline		--pretty=oneline --abbrev-commit 的简化用法
+		--stat			显示每次更新的文件修改统计信息
+		--shortstat		只显示 --stat 中最后的行数修改添加移除统计
+		--name-only		仅在提交信息后显示已修改的文件清单。
+		--name-status	显示新增、修改、删除的文件清单。
+		--abbrev-commit	仅显示 SHA-1 的前几个字符，而非所有的 40 个字符
+	-(n)	仅显示最近的 n 条提交	(例：-2)
+		--since, --after	仅显示指定时间之后的提交
+		--until, --before	仅显示指定时间之前的提交
+		--author			仅显示指定作者相关的提交
+		--committer			仅显示指定提交者相关的提交
+
+查看某次历史修改内容
+$ git show <commit id>
+	查看某次commit的修改内容
+$ git show <tagname>
+	查看某标签修改的内容
+
+回退到上一个版本
+$ git reset --hard HEAD^
+	git reset --hard <commit id>	回退到某个版本，<commot id>在 git log 中查看
+
+查看命令历史 (确定要回到未来的哪个版本)
+$ git reflog
+
+取消工作区的修改
+$ git checkout -- <file>
+
+把暂存区的修改回退到工作区 / 取消已经暂存的文件
+$ git reset HEAD <file>
+
+删除仓库中的文件
+$ git rm <file>
+	删除后需要执行 git commit 将删除文件操作更新到仓库中
+	
+	-f	删除之前修改过并且已经放到暂存区域的文件，则必须要用强制删除选项
+
+	$git rm --cached <file>
+		把文件从 Git 仓库中删除（亦即从暂存区域移除）
+		但仍然希望保留在当前工作目录中
+	
+移动文件
+$ git mv <file-from> <file-to>
+	Git 并不显式跟踪文件移动操作
+* 这条命令可以用于文件的改名
+######################################################
+安装完成后进行如下设置
+
+设置姓名
+$ git config --global user.name "Your Name"
+
+设置邮箱
+$ git config --global user.email "email@example.com"
+
+执行 git push 没有指定分支时，只有当前分支会被 push 到你使用 git pull 获取的代码
+$ git config --global push.default simple
+
+让Git适当的显示颜色
+$ git config --global color.ui true
+########################################################
+标签管理
+
+创建标签
+$ git tag <name>
+
+	为历史版本创建标签
+	$ git tag <name> <commit id>
+
+	$git tag -a <tagname> -m "blablabla..."
+		-a	指定标签名
+		-m	指定说明文字
+
+	$ git tag -s <tagname> -m "blablabla..."
+		-s	使用PGP签名标签，PGP签名的标签是不可伪造
+	
+	$ git tag -d <tagname>
+		-d	删除标签
+查看所有标签
+$ git tag
+
+推送一个标签到远程仓库
+$ git push origin <tagname>
+
+推送全部标签到远程仓库
+$ git push origin --tags
+
+删除远程标签
+$ git tag -d <tagname>						# 先删除本地标签
+$ git push origin :refs/tags/<tagname>		# 再删除远程标签
+
+查看某次历史修改内容
+$ git show <commit id>
+	查看某次commit的修改内容
+$ git show <tagname>
+查看某标签修改的内容
+#######################################################
+#######################################################
+写在前面
+
+    本文档是学习 廖雪峰Git教程 后所做的笔记，教程帮忙很大，非常感谢！
+    本笔记主要记录了教程中所用的命令，概念内容不包括在内。
+    建议看完教程后再看Git官网的 Pro Git 一书。
+    最后附上本人的 GitHub ，感谢拨冗翻阅拙作,敬请斧正。
+
+创建版本库
+
+git init  #初始化所在目录为Git仓库
+
+    初始化的目录可以不为空
+
+添加文件到版本库
+
+git add <file> ...  #添加文件到暂存区（stage）
+        -f <file> ...  #强制添加到暂存区（可用于添加忽略文件）
+git commit -m "提交说明"  #从暂存区提交到版本库
+
+    git add 命令可多次执行，然后commit一次。
+
+时光机穿梭
+
+    查看状态、差异
+
+git status  #查看仓库当前状态
+git diff [file]  #比较工作区和暂存区的差异
+git diff --cached [file]  #比较暂存区和版本库的差异
+git diff HEAD -- [file]  #比较工作区和版本库的差异
+
+    版本切换
+
+git log  #查看提交历史
+git log -1  #查看最后一次提交信息（-2 则是最后两次）
+git log --pretty=oneline  #单行格式显示提交历史
+        --graph  #显示分支合并图
+        --abbrev-commit  #简写的commit_id
+git reflog  #查看所有操作记录，包括删除的commit记录
+git reset --hard HEAD^  #回退到上一版本
+# HEAD 表当前版本， HEAD^ 表上一版本，HEAD^^ 表上两版本，HEAD~99 表上99版本。
+git reset --hard commit_id  #切换到指定版本
+
+    Git跟踪管理的是修改，而非文件
+
+    撤销修改
+
+git checkout -- <file>  #撤销工作区的修改
+git reset HEAD <file>  #撤销暂存区的修改
+
+    若已commit但没提交到远程库，可用版本回退进行撤销
+
+    删除文件
+        方法一：工作区删除文件，然后正常提交
+
+    rm <file> ...  #工作区删除
+    git add <file> ...  #将修改提交至暂存区
+    git commit -m "说明"  #提交到版本库
+
+        方法二：直接命令删除工作区和暂存区，然后提交版本库
+
+    git rm <file> ...  #删除工作区和暂存区文件
+    git commit -m "说明"  #提交到版本库
+
+    删除、增加文件也都属于修改
+
+远程仓库
+
+    创建SSH Key
+
+ssh-keygen -t rsa -C "youremail@example.com"  #生成的Key在家目录.ssh文件夹里面，pub后缀是公钥，另一个是私钥。
+
+    添加远程库
+
+git remote add origin git@server-name:path/repo-name.git  #添加远程仓库
+git remote  #查看远程库信息
+           -v  #显示详细信息
+git push -u origin <branch>  #推送并关联指定分支到远程库
+
+    除第一次关联，之后push不用加-u选项
+
+    从远程库克隆
+
+git clone git@server-name:path/repo-name.git  #将远程仓库克隆到当前目录
+git pull  #拉取远程仓库内容
+
+分支管理
+
+git branch <branch>  #创建分支
+git checkout <branch>  #切换到指定分支
+git checkout -b <branch>  #创建并切换到该分支
+git branch  #查看现有分支
+git branch -d <branch>  #删除指定分支
+git branch --set-upstream <branch_local> <branch_remote>  #指定本地分支与远程分支的链接
+git merge <branch>  #合并指定分支到当前分支
+          --no-ff <branch>  #禁用快速合并
+git merge --no-ff -m "提交说明" <branch>  #普通方式合并，并附提交说明
+git stash  #保存当前工作环境（包括工作区和暂存区）
+git stash list  #查看保存的工作列表
+git stash apply [stash@{X}]  #恢复工作状态，但不删除stash内容
+git stash pop [stash@{X}]  #恢复工作状态，并删除stash内容
+git stash drop [stash@{X}]  #删除stash内容
+git branch -D <branch>  #强制删除分支（常用于未合并的分支）
+
+    HEAD不是直接指向提交点，而是指向分支，分支再指向提交点
+
+    多人协作
+
+##error: failed to push some refs to ...
+1. git pull 远程库
+2. 解决冲突（若有），再push
+
+    分支管理策略图
+
+image
+标签管理
+
+git tag  #查看现有标签
+git tag <tag_name>  #给当前所在的commit打标签
+git tag <tag_name> <commit_id>  #给指定commit打标签
+git tag -a <tag_name> -m "标签说明" <commit_id>  #给指定commit打标签，并附说明
+        -s <tag_name> -m "标签说明" <commit_id>  #用gpg私钥签名
+        -d <tag_name>  #删除标签
+git show <tag_name>  #显示标签信息
+git push origin <tag_name>  #推送标签到远程库
+git push origin --tags  #推送所有未推送的标签到远程库
+git push origin :refs/tags/<tag_name>  #删除远程标签（先删除本地，再使用该命令删除）
+
+自定义Git
+
+git config --global user.name "you_name"  #设置全局用户名
+git config --global user.email "email@example.com"  #设置全局邮箱
+git config --global color.ui true  #设置全局颜色显示
+git config --global alias.<alias_name> <'command_name'>  #设置别名
+
+    忽略特殊文件
+        工作区创建.gitignore文件
+        内容举例，如下：
+
+    #Windows:
+    Thumbs.db
+    ehthumbs.db
+    Desktop.ini
+
+    #Python:
+    *.py[cod]
+    *.so
+    *.egg
+    *.egg-info
+    dist
+    build
+    #My configurations:
+    db.ini
+    deploy_key_rsa
+
+git check-ignore -v <file>  #查看忽略该文件的规则
+
+    规则有错时常用上述命令查找定位
+
+    配置别名列表
+
+git config --global alias.confg 'config --global'
+git confg alias.st status
+git confg alias.co checkout
+git confg alias.ci commit
+git confg alias.br branch
+git confg alias.unstage 'reset HEAD'
+git confg alias.last 'log -1'
+git confg alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s Cgreen(%cr) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
